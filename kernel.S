@@ -1,3 +1,5 @@
+.option norelax
+
 .equ STACK_SIZE,1024*1024
 .equ UART,0x10000000
 
@@ -33,9 +35,38 @@ main:
     la a0,msg
     jal print_string
 
+    la t0,trap_handler
+    csrw stvec,t0
+
+    jal foo
+
+    csrsi sstatus,0x2
+    li t0,0x20
+    csrs sie,t0
+
     jal echo
 
     j halt
+
+trap_handler:
+    jal c_trap_handler
+    sret
+
+.globl get_time
+get_time:
+    csrr a0,time
+    ret
+
+.globl sbi_call
+sbi_call:
+    mv a7,a0
+    mv a6,a1
+    mv a0,a2
+    mv a1,a3
+    mv a2,a4
+    mv a3,a5
+    ecall
+    ret
 
 print_fdt:
     push a0
@@ -84,6 +115,7 @@ echo:
 
     j echo
 
+.globl print_string
 print_string:
     prologue
 1:
