@@ -1,0 +1,42 @@
+.option norelax
+
+.equ STACK_SIZE,1024*1024
+.equ PAGE_SIZE,4096
+
+.section .text
+
+# setup stack
+mv fp,x0
+la sp,stack_base
+
+la t0,trap_handler
+csrw stvec,t0
+
+jal main
+
+halt:
+    j halt
+
+trap_handler:
+    jal trap
+    sret
+
+.section .bss
+.balign PAGE_SIZE
+.globl giga_page_table
+giga_page_table:
+.zero 4*8
+
+.balign PAGE_SIZE
+.globl mega_page_tables
+mega_page_tables:
+.zero 4*512*8
+
+.balign PAGE_SIZE
+.globl page_tables
+page_tables:
+.zero 4*512*512*8
+
+.balign PAGE_SIZE
+.skip STACK_SIZE
+stack_base:
