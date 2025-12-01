@@ -19,7 +19,21 @@ halt:
 
 trap_handler:
     jal trap
+    bnez a0,halt
     sret
+
+.section .rodata
+.balign PAGE_SIZE
+.globl user_main
+user_main:
+    li a0,0
+    ecall
+
+    li a0,42
+    ecall
+
+    li a0,1
+    ecall
 
 .section .bss
 .balign PAGE_SIZE
