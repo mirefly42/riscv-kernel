@@ -1,4 +1,6 @@
 /entry.o
+/io.o
 /kernel.bin
 /kernel.elf
 /kernel.o
+/qemu_ramfb.o

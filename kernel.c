@@ -1,9 +1,9 @@
+#include "io.h"
 #include "sv39.h"
-#include <limits.h>
-#include <stdint.h>
 
-#define UART ((volatile u8 *)0x10000000)
 #define PAGE_SIZE 4096
+
+extern void testRamFb(void);
 
 typedef struct Symbol Symbol;
 extern Symbol kernel_start;
@@ -25,42 +25,6 @@ enum {
     SATP_MODE_BARE,
     SATP_MODE_SV39 = 8,
 };
-
-static void printString(const char *str) {
-    for (char c; (c = *str) != '\0'; ++str) {
-        UART[0] = c;
-    }
-}
-
-static char digitChar(u8 digit) {
-    if (digit < 10) {
-        return '0' + digit;
-    }
-
-    return 'A' + (digit - 10);
-}
-
-static void printUMax(uMax value, u8 radix, u8 min_width) {
-    char buf[sizeof(value) * CHAR_BIT];
-    char *const end = buf + sizeof(buf);
-
-    char *c_ptr = end;
-    while (value > 0) {
-        *(--c_ptr) = digitChar(value % radix);
-        value /= radix;
-    };
-
-    const u8 len = end - c_ptr;
-    if (len < min_width) {
-        for (u8 i = 0; i < (min_width - len); ++i) {
-            UART[0] = digitChar(0);
-        }
-    }
-
-    for (;c_ptr != end; ++c_ptr) {
-        UART[0] = *c_ptr;
-    }
-}
 
 static void mmap(Sv39VirtualAddress virtual, Sv39PhysicalAddress physical, u8 flags) {
     u16 vpn2 = SV39_VA_VPN2_Get(virtual);
@@ -123,6 +87,8 @@ void main(uXLEN hart_id, void *fte_header) {
     printString("running on hart ");
     printUMax(hart_id, 10, 1);
     printString("\n");
+
+    testRamFb();
 
     uXLEN satp = 0;
     satp = SATP_PPN_Set(satp, (uPtr)giga_page_table / PAGE_SIZE);

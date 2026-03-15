@@ -17,6 +17,11 @@ jal main
 halt:
     j halt
 
+.globl storeU64
+storeU64:
+    sd a1,0(a0)
+    ret
+
 trap_handler:
     jal trap
     bnez a0,halt

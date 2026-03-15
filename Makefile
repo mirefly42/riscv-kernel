@@ -3,21 +3,25 @@ LD = ld
 AS = as
 CC = gcc
 
-HDR = bits.h sv39.h types.h
+SRC = io.c kernel.c qemu_ramfb.c
+OBJ = entry.o ${SRC:.c=.o}
+HDR = bits.h byte_order.h io.h sv39.h types.h
 
 kernel.bin: kernel.elf
 	${CROSS_COMPILE}${OBJCOPY} -O binary kernel.elf $@
 
-kernel.elf: entry.o kernel.o
-	${CROSS_COMPILE}${LD} -T link.ld --no-relax entry.o kernel.o -o $@
+kernel.elf: ${OBJ}
+	${CROSS_COMPILE}${LD} -T link.ld --no-relax ${OBJ} -o $@
 
 entry.o: entry.s
 	${CROSS_COMPILE}${AS} entry.s -o $@
 
-kernel.o: kernel.c ${HDR}
-	${CROSS_COMPILE}${CC} -std=c23 -ffreestanding -fno-pie -mcmodel=medany -mno-relax -c kernel.c -o $@ ${CFLAGS}
+.c.o:
+	${CROSS_COMPILE}${CC} -c -std=c23 -ffreestanding -fno-pie -mcmodel=medany -mno-relax -o $@ $< ${CFLAGS}
+
+${OBJ}: ${HDR}
 
 clean:
-	rm -f kernel.bin kernel.elf entry.o kernel.o
+	rm -f kernel.bin kernel.elf ${OBJ}
 
 .PHONY: clean
