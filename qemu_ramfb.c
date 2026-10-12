@@ -2,6 +2,7 @@
 #include "byte_order.h"
 #include "io.h"
 #include "types.h"
+#include <stdbool.h>
 #include <stddef.h>
 
 #define FOURCC_CODE(a, b, c, d) ((u32)(a) | ((u32)(b) << 8) | ((u32)(c) << 16) | ((u32)(d) << 24))
@@ -109,8 +110,7 @@ void testRamFb(void) {
         return;
     }
 
-    constexpr u32 width = 640;
-    constexpr u32 height = 480;
+    enum { width = 640, height = 480 };
     static Color framebuffer[height][width];
 
     QemuRamFbCfg ram_fb_cfg = {
@@ -122,15 +122,15 @@ void testRamFb(void) {
         .stride = u32ToBe(0),
     };
 
-    if (!qemuFwCfgDmaAccessEasy("ws", &ram_fb_cfg, offsetof(typeof(ram_fb_cfg), _end_pad), u16FromBe(ramfb_selector))) {
+    if (!qemuFwCfgDmaAccessEasy("ws", &ram_fb_cfg, offsetof(QemuRamFbCfg, _end_pad), u16FromBe(ramfb_selector))) {
         printString("error: unable to initialize ramfb\n");
         return;
     }
 
     printString("ramfb initialized\n");
 
-    constexpr u8 power = 5;
-    constexpr u8 mask = (1u << power) - 1;
+    const u8 power = 5;
+    const u8 mask = (1u << power) - 1;
 
     for (u32 y = 0; y < height; ++y) {
         for (u32 x = 0; x < width; ++x) {

@@ -17,7 +17,7 @@ entry.o: entry.s
 	${CROSS_COMPILE}${AS} entry.s -o $@
 
 .c.o:
-	${CROSS_COMPILE}${CC} -c -std=c23 -ffreestanding -fno-pie -mcmodel=medany -mno-relax -o $@ $< ${CFLAGS}
+	${CROSS_COMPILE}${CC} -c -ffreestanding -fno-pie -mcmodel=medany -mno-relax -o $@ $< ${CFLAGS}
 
 ${OBJ}: ${HDR}
 
