@@ -83,7 +83,7 @@ static bool strEqual(const char *a, const char *b) {
 }
 
 #define PROPAGATE(success) do { \
-    if (!success) return false; \
+    if (!(success)) return false; \
 } while (0)
 
 static bool findRamFbSelector(U16Be *out_selector) {
