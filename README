@@ -1,10 +1,18 @@
-Building
---------
+Building (gcc)
+--------------
 
 You're supposed to use riscv64-unknown-elf, but any riscv64 gcc toolchain *should* work.
 I personally use riscv64-linux-musl because it's in my distro repos.
 
     make CROSS_COMPILE=riscv64-unknown-elf-
+
+Building (clang)
+----------------
+
+    make \
+        CC=clang CFLAGS='--target=riscv64' \
+        AS=clang ASFLAGS='--target=riscv64 -c' \
+        LD=ld.lld
 
 Running
 -------

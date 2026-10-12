@@ -11,10 +11,10 @@ kernel.bin: kernel.elf
 	${CROSS_COMPILE}${OBJCOPY} -O binary kernel.elf $@
 
 kernel.elf: ${OBJ}
-	${CROSS_COMPILE}${LD} -T link.ld --no-relax ${OBJ} -o $@
+	${CROSS_COMPILE}${LD} -T link.ld --no-relax ${OBJ} -o $@ ${LDFLAGS}
 
 entry.o: entry.s
-	${CROSS_COMPILE}${AS} entry.s -o $@
+	${CROSS_COMPILE}${AS} entry.s -o $@ ${ASFLAGS}
 
 .c.o:
 	${CROSS_COMPILE}${CC} -c -ffreestanding -fno-pie -mcmodel=medany -mno-relax -o $@ $< ${CFLAGS}

@@ -2,16 +2,16 @@
 
 PROVIDE(kernel_start = .);
 SECTIONS {
-    .text BLOCK(4096) : {
+    .text ALIGN(4096) : {
         *(.text)
     }
-    .data BLOCK(4096) : {
+    .data ALIGN(4096) : {
         *(.data)
     }
-    .rodata BLOCK(4096) : {
+    .rodata ALIGN(4096) : {
         *(.rodata)
     }
-    .bss BLOCK(4096) : {
+    .bss ALIGN(4096) : {
         *(.bss)
     }
 }
